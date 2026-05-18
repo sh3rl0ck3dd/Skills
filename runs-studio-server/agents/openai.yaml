@@ -1,0 +1,3 @@
+display_name: Runs Studio Server
+short_description: Reset and start the local Graph Studio server workflow.
+default_prompt: Run the runs-studio-server workflow.
