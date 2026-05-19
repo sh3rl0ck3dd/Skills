@@ -1,0 +1,4 @@
+interface:
+  display_name: "Restart Studio Server"
+  short_description: "Restart the local Graph Studio server"
+  default_prompt: "Use $restart-studio-server to restart my local Graph Studio server."
