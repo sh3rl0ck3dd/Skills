@@ -12,7 +12,7 @@ Write or update a branch-scoped handoff document so a fresh agent can continue t
 The handoff file is always:
 
 ```text
-<project-root>/.handoff/<context-name>/HANDOFF.md
+<parent-of-project-root>/.handoff/<project-name>/<context-name>/HANDOFF.md
 ```
 
 ## Workflow
@@ -26,21 +26,26 @@ The handoff file is always:
    - If detached, use a short commit/ref description.
    - In ADE, use the active view or transaction identity.
    - If no context is detectable, use `unknown-context`.
-3. Sanitize the context name for a directory.
+3. Identify and sanitize the project name.
+   - Use the project root directory name by default.
+   - Replace `/`, whitespace, and shell-sensitive punctuation with `-`.
+   - Keep letters, numbers, `.`, `_`, and `-`.
+   - Avoid empty names; fall back to `project`.
+4. Sanitize the context name for a directory.
    - Replace `/`, whitespace, and shell-sensitive punctuation with `-`.
    - Keep letters, numbers, `.`, `_`, and `-`.
    - Avoid empty names; fall back to `unknown-context`.
-4. Keep the handoff hidden from Git when possible.
-   - In a Git repo, check whether `.handoff/` is already ignored with `git check-ignore .handoff/`.
-   - If it is not ignored and the user did not request read-only behavior, add `.handoff/` to the project root `.gitignore` using the normal repo editing rules.
-   - If `.gitignore` cannot be safely changed, still write the handoff under `.handoff/` and tell the user that Git ignore setup was not completed.
-5. Check for the existing handoff at `.handoff/<context-name>/HANDOFF.md`.
+5. Put the handoff one directory above the project root.
+   - Use `<parent-of-project-root>/.handoff/<project-name>/<context-name>/HANDOFF.md`.
+   - Do not write the handoff folder inside the Git worktree.
+   - If the parent directory is not writable, stop and tell the user the intended path and the write failure.
+6. Check for the existing handoff at that path.
    - If it exists, read it before updating.
    - Preserve still-relevant facts, decisions, commands, blockers, and file paths.
    - Replace or remove stale context when requirements changed.
    - Record important removed or superseded context under `Changed or Removed Context`.
-6. Create or update the handoff using the required structure below.
-7. Final response must include the absolute path to the handoff file and tell the user they can start a fresh conversation with that path.
+7. Create or update the handoff using the required structure below.
+8. Final response must include the absolute path to the handoff file and tell the user they can start a fresh conversation with that path.
 
 ## Required Document Structure
 
@@ -69,14 +74,14 @@ Use exactly these top-level sections:
 - Make `Next Steps` ordered and action-oriented.
 - Do not append old history forever. When requirements changed, replace stale sections and summarize what was removed or superseded.
 - Do not mix contexts from other branches. If the current branch/context changes, write to that context's own handoff path.
-- Use the hidden `.handoff/` directory so normal `ls` does not show the handoff files.
-- In Git repos, keep `.handoff/` ignored so handoff files do not appear in `git status`.
+- Use the hidden `.handoff/` directory one level above the project root, so normal `ls` inside the project does not show the handoff files.
+- Keep handoffs outside the Git worktree so they do not appear in `git status` and do not require `.gitignore` changes.
 - Respect user read-only instructions. If the user asks for investigation only, draft the handoff content in the response instead of writing the file.
 
 ## Final Response
 
 After writing or updating the handoff, respond with:
 
-- The absolute path to `.handoff/<context-name>/HANDOFF.md`.
+- The absolute path to `<parent-of-project-root>/.handoff/<project-name>/<context-name>/HANDOFF.md`.
 - A brief note that the user can start a fresh conversation with just that path.
-- Any assumptions made about project root, context name, or Git ignore setup.
+- Any assumptions made about project root, project name, context name, or parent-directory writability.
