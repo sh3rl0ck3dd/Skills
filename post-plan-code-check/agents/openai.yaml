@@ -1,0 +1,4 @@
+interface:
+  display_name: "Post-plan Code Check"
+  short_description: "Check implementation quality after a plan"
+  default_prompt: "Use $post-plan-code-check to review the code after implementing this plan."
